@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import QRCode from 'qrcode';
+import { findPassport } from '@/data/passports';
 import { 
   Smartphone, 
   Wifi, 
@@ -13,7 +14,11 @@ import {
   ShieldCheck, 
   QrCode,
   Sparkles,
-  RefreshCw
+  RefreshCw,
+  Layers,
+  MapPin,
+  Calendar,
+  UserCheck
 } from 'lucide-react';
 
 interface QRCodeDisplayProps {
@@ -40,6 +45,8 @@ export default function QRCodeDisplay({
   const [showSimModal, setShowSimModal] = useState<boolean>(false);
   const [showHelp, setShowHelp] = useState<boolean>(false);
   const [scanStep, setScanStep] = useState<'scanning' | 'resolved'>('scanning');
+
+  const passportData = findPassport(passportId);
 
   // Fetch detected server IP on mount
   useEffect(() => {
@@ -310,33 +317,91 @@ export default function QRCodeDisplay({
 
                   {/* Product Card */}
                   <div className="p-3 rounded-xl bg-paper border border-border shadow-sm space-y-2 text-xs">
-                    <p className="font-mono text-[10px] text-terracotta font-bold">
-                      ID: {passportId}
-                    </p>
-                    <h4 className="font-serif text-sm font-bold text-charcoal leading-tight">
-                      Sohrai Forest & Birds Motif - Hand-Painted Canvas
-                    </h4>
-                    <p className="text-[11px] text-secondary">
-                      Master Artist: <strong>Shanti Soren</strong> (West Singhbhum)
-                    </p>
-                    <div className="p-2 rounded bg-ivory-warm text-[10px] space-y-0.5 border border-border/70">
-                      <p className="font-semibold text-charcoal">Mineral Stream: Chiriya Iron-Ochre</p>
-                      <p className="text-secondary font-mono">Batch: BATCH-2026-FE-08</p>
-                      <p className="text-forest font-semibold">TCLP Heavy Metals Leaching: Pass (&lt;0.01 mg/L)</p>
+                    <div className="flex items-center justify-between">
+                      <p className="font-mono text-[10px] text-terracotta font-bold">
+                        ID: {passportData?.passportId || passportId}
+                      </p>
+                      <span className="text-[9px] uppercase font-bold px-1.5 py-0.5 rounded bg-sand/30 text-charcoal">
+                        {passportData?.productType || 'Handcrafted'}
+                      </span>
                     </div>
-                  </div>
 
-                  {/* Geological Origin Node */}
-                  <div className="p-3 rounded-xl bg-paper border border-border text-xs space-y-1">
-                    <span className="text-[10px] font-bold uppercase text-secondary">Geological Coordinates</span>
-                    <p className="font-mono text-charcoal text-[11px]">22°18'43" N, 85°16'51" E</p>
-                    <p className="text-secondary text-[10px]">Saranda Mining Sector Settling Basin Sector 3</p>
+                    <h4 className="font-serif text-sm font-bold text-charcoal leading-tight">
+                      {passportData?.productName || 'Verified RangMitti Creation'}
+                    </h4>
+
+                    {/* Who Made It */}
+                    <div className="p-2 rounded-lg bg-ivory-warm border border-sand/40 space-y-1">
+                      <div className="flex items-center gap-1 text-[10px] font-bold text-charcoal">
+                        <UserCheck className="w-3 h-3 text-terracotta" />
+                        <span>Who Made It:</span>
+                      </div>
+                      <p className="text-[11px] text-charcoal font-semibold">
+                        {passportData?.artisanDetails?.name || 'Master Artisan'}
+                      </p>
+                      <p className="text-[10px] text-secondary">
+                        {passportData?.artisanDetails?.community || 'Tribal Craft Tradition'} • {passportData?.artisanDetails?.region || 'Jharkhand'}
+                      </p>
+                    </div>
+
+                    {/* Which RangMitti is used */}
+                    <div className="p-2 rounded-lg bg-forest/10 border border-forest/30 space-y-1">
+                      <div className="flex items-center gap-1 text-[10px] font-bold text-forest">
+                        <Layers className="w-3 h-3" />
+                        <span>RangMitti Mineral Stream & Safety:</span>
+                      </div>
+                      <p className="text-[11px] font-semibold text-charcoal">
+                        {passportData?.geologicalOrigin?.mineralStream || 'Mineral Valorization By-Product'}
+                      </p>
+                      <p className="text-[10px] text-secondary font-mono">
+                        Batch: {passportData?.materialBatch?.batchNumber || 'BATCH-2026-VAL'}
+                      </p>
+                      <p className="text-[10px] text-forest font-bold">
+                        ✓ Heavy Metals TCLP: Pass (&lt;0.01 mg/L)
+                      </p>
+                    </div>
+
+                    {/* Geological Origin Node */}
+                    <div className="p-2 rounded-lg bg-ivory-warm border border-border text-[10px] space-y-0.5">
+                      <div className="flex items-center gap-1 font-bold text-charcoal">
+                        <MapPin className="w-3 h-3 text-terracotta" />
+                        <span>Geological Mine Origin:</span>
+                      </div>
+                      <p className="text-secondary">{passportData?.geologicalOrigin?.mineOrSite}</p>
+                      <p className="font-mono text-terracotta font-bold text-[9px]">{passportData?.geologicalOrigin?.coordinates}</p>
+                    </div>
+
+                    {/* When it was made & process steps */}
+                    <div className="p-2 rounded-lg bg-paper border border-border text-[10px] space-y-1.5">
+                      <div className="flex items-center justify-between font-bold text-charcoal">
+                        <span className="flex items-center gap-1">
+                          <Calendar className="w-3 h-3 text-terracotta" />
+                          <span>Creation Date:</span>
+                        </span>
+                        <span className="font-mono text-secondary">{passportData?.issueDate || '2026-02-20'}</span>
+                      </div>
+
+                      <div className="pt-1 border-t border-border/60">
+                        <span className="text-[9px] font-bold text-secondary uppercase block mb-1">
+                          Complete 8-Step Lifecycle Journey:
+                        </span>
+                        <div className="space-y-1 max-h-24 overflow-y-auto pr-1">
+                          {(passportData?.journeySteps || []).map((step) => (
+                            <div key={step.stepNumber} className="flex items-start gap-1 text-[9px]">
+                              <span className="font-mono font-bold text-terracotta">{step.stepNumber}.</span>
+                              <span className="font-semibold text-charcoal">{step.title}</span>
+                              <span className="text-forest ml-auto">✓</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
                   {/* Actions inside Phone */}
                   <div className="space-y-2 pt-1">
                     <a
-                      href={`/passport/${passportId}`}
+                      href={`/passport/${passportData?.passportId || passportId}`}
                       className="w-full py-2.5 px-3 rounded-xl bg-terracotta text-paper text-xs font-semibold text-center block shadow"
                     >
                       Open Full Certificate Ledger →
