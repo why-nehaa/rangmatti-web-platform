@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useStore } from '@/context/StoreContext';
 import { sampleMaterials } from '@/data/materials';
 import { MaterialItem, ValidationStatus } from '@/types';
+import ProductPassportModal from '@/components/passport/ProductPassportModal';
 import { 
   Filter, 
   Grid, 
@@ -18,7 +19,8 @@ import {
   FileText, 
   AlertCircle,
   Sparkles,
-  Info
+  Info,
+  QrCode
 } from 'lucide-react';
 
 export default function MaterialsPage() {
@@ -33,9 +35,10 @@ export default function MaterialsPage() {
   const [sortBy, setSortBy] = useState<string>('relevance');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
-  // Preview Modal
+  // Preview Modal & Passport Modal
   const [previewMaterial, setPreviewMaterial] = useState<MaterialItem | null>(null);
   const [addedNotice, setAddedNotice] = useState<string | null>(null);
+  const [scanPassportId, setScanPassportId] = useState<string | null>(null);
 
   const categories = ['All', 'Raw Pigment Powder', 'Processed Slurry', 'Fine Aggregate', 'Ceramic Wash'];
   const colors = ['All', 'Terracotta Red', 'Forest Verdigris', 'Kaolin Bone White', 'Graphite Charcoal', 'Golden Sand', 'Muted Clay'];
@@ -415,20 +418,30 @@ export default function MaterialsPage() {
                         </div>
                       </div>
 
-                      <div className="px-5 pb-5 pt-1 grid grid-cols-2 gap-2">
+                      <div className="px-5 pb-5 pt-1 space-y-2">
+                        <div className="grid grid-cols-2 gap-2">
+                          <button
+                            onClick={() => setPreviewMaterial(material)}
+                            className="py-2.5 px-3 rounded-lg border border-border text-center text-xs font-semibold text-charcoal hover:bg-ivory-warm transition-colors flex items-center justify-center gap-1"
+                          >
+                            <FileText className="w-3.5 h-3.5 text-secondary" />
+                            Lab Specs
+                          </button>
+                          <button
+                            onClick={() => handleAdd(material)}
+                            className="py-2.5 px-3 rounded-lg bg-terracotta hover:bg-terracotta-deep text-paper text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors shadow-sm"
+                          >
+                            <ShoppingBag className="w-3.5 h-3.5" />
+                            Add to Cart
+                          </button>
+                        </div>
+
                         <button
-                          onClick={() => setPreviewMaterial(material)}
-                          className="py-2.5 px-3 rounded-lg border border-border text-center text-xs font-semibold text-charcoal hover:bg-ivory-warm transition-colors flex items-center justify-center gap-1"
+                          onClick={() => setScanPassportId(material.passportId || 'RM-MAT-001')}
+                          className="w-full py-2 px-3 rounded-lg bg-sand/20 hover:bg-sand/40 border border-sand text-center text-xs font-bold text-charcoal hover:text-terracotta transition-colors flex items-center justify-center gap-1.5 shadow-sm"
                         >
-                          <FileText className="w-3.5 h-3.5 text-secondary" />
-                          Lab Specs
-                        </button>
-                        <button
-                          onClick={() => handleAdd(material)}
-                          className="py-2.5 px-3 rounded-lg bg-terracotta hover:bg-terracotta-deep text-paper text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors shadow-sm"
-                        >
-                          <ShoppingBag className="w-3.5 h-3.5" />
-                          Add to Cart
+                          <QrCode className="w-3.5 h-3.5 text-terracotta" />
+                          <span>QR Code & Virtual Scan</span>
                         </button>
                       </div>
                     </div>
@@ -588,6 +601,13 @@ export default function MaterialsPage() {
           </div>
         </div>
       )}
+
+      {/* Global Product Passport Modal (Phone QR & Virtual Scan) */}
+      <ProductPassportModal
+        isOpen={!!scanPassportId}
+        passportId={scanPassportId || undefined}
+        onClose={() => setScanPassportId(null)}
+      />
     </div>
   );
 }
