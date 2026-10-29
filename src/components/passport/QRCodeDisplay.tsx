@@ -36,7 +36,7 @@ export default function QRCodeDisplay({
   className = '',
   showDownload = false,
 }: QRCodeDisplayProps) {
-  const [targetMode, setTargetMode] = useState<'lan' | 'local' | 'custom'>('lan');
+  const [targetMode, setTargetMode] = useState<'lan' | 'local' | 'custom'>('local');
   const [lanIp, setLanIp] = useState<string>('10.73.68.75');
   const [customHost, setCustomHost] = useState<string>('');
   const [resolvedUrl, setResolvedUrl] = useState<string>(initialUrl || '');
