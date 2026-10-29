@@ -29,6 +29,7 @@ export interface LabTestRecord {
 export interface MaterialItem {
   id: string;
   slug: string;
+  passportId?: string;
   name: string;
   mineralSource: string;
   category: 'Raw Pigment Powder' | 'Processed Slurry' | 'Fine Aggregate' | 'Ceramic Wash' | 'Watercolour Base';
@@ -78,7 +79,7 @@ export interface ArtisanProduct {
   passportId: string;
   title: string;
   slug: string;
-  category: 'Paintings & Wall Art' | 'Terracotta Decor' | 'Dokra Metal & Mineral Fusion' | 'Handcrafted Paper Art' | 'Ceramic Vessels';
+  category: 'Paintings & Wall Art' | 'Terracotta Decor' | 'Dokra Metal & Mineral Fusion' | 'Handcrafted Paper Art' | 'Ceramic Vessels' | 'Wearable Art & Handlooms';
   artisanId: string;
   artisanName: string;
   artisanRegion: string;
