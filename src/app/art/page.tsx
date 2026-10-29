@@ -7,6 +7,7 @@ import { useStore } from '@/context/StoreContext';
 import { sampleProducts } from '@/data/products';
 import { sampleArtisans } from '@/data/artisans';
 import { ArtisanProduct } from '@/types';
+import ProductPassportModal from '@/components/passport/ProductPassportModal';
 import { 
   Filter, 
   Search, 
@@ -35,10 +36,12 @@ export default function ArtMarketplacePage() {
   // Quick view modal
   const [quickViewProduct, setQuickViewProduct] = useState<ArtisanProduct | null>(null);
   const [addedNotice, setAddedNotice] = useState<string | null>(null);
+  const [scanPassportId, setScanPassportId] = useState<string | null>(null);
 
   const categories = [
     'All',
     'Paintings & Wall Art',
+    'Wearable Art & Handlooms',
     'Dokra Metal & Mineral Fusion',
     'Terracotta Decor',
     'Handcrafted Paper Art',
@@ -364,13 +367,14 @@ export default function ArtMarketplacePage() {
                           </button>
 
                           {/* Passport Link Pill */}
-                          <Link
-                            href={`/passport/${product.passportId}`}
-                            className="absolute bottom-3 left-3 px-2.5 py-1 rounded-full bg-paper/90 backdrop-blur-md text-[10px] font-bold text-charcoal border border-border flex items-center gap-1 hover:bg-paper hover:text-terracotta transition-colors shadow-sm"
+                          <button
+                            onClick={() => setScanPassportId(product.passportId)}
+                            className="absolute bottom-3 left-3 px-2.5 py-1 rounded-full bg-paper/95 backdrop-blur-md text-[10px] font-bold text-charcoal border border-border flex items-center gap-1 hover:bg-paper hover:text-terracotta transition-colors shadow-sm"
+                            title="Scan QR / Virtual Passport"
                           >
                             <QrCode className="w-3 h-3 text-terracotta" />
                             <span>Passport: {product.passportId}</span>
-                          </Link>
+                          </button>
                         </div>
 
                         {/* Details */}
@@ -416,19 +420,30 @@ export default function ArtMarketplacePage() {
                       </div>
 
                       {/* Actions */}
-                      <div className="px-5 pb-5 pt-1 grid grid-cols-2 gap-2">
-                        <Link
-                          href={`/product/${product.slug}`}
-                          className="py-2.5 px-3 rounded-lg border border-border text-center text-xs font-semibold text-charcoal hover:bg-ivory-warm transition-colors"
-                        >
-                          Story & Specs
-                        </Link>
+                      <div className="px-5 pb-5 pt-1 space-y-2">
+                        <div className="grid grid-cols-2 gap-2">
+                          <Link
+                            href={`/product/${product.slug}`}
+                            className="py-2.5 px-3 rounded-lg border border-border text-center text-xs font-semibold text-charcoal hover:bg-ivory-warm transition-colors"
+                          >
+                            Story & Specs
+                          </Link>
+                          <button
+                            onClick={() => handleAddToCart(product)}
+                            className="py-2.5 px-3 rounded-lg bg-terracotta hover:bg-terracotta-deep text-paper text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors shadow-sm"
+                          >
+                            <ShoppingBag className="w-3.5 h-3.5" />
+                            Add to Cart
+                          </button>
+                        </div>
+
+                        {/* Dedicated QR Passport & Virtual Scan Button */}
                         <button
-                          onClick={() => handleAddToCart(product)}
-                          className="py-2.5 px-3 rounded-lg bg-terracotta hover:bg-terracotta-deep text-paper text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors shadow-sm"
+                          onClick={() => setScanPassportId(product.passportId)}
+                          className="w-full py-2 px-3 rounded-lg bg-sand/20 hover:bg-sand/40 border border-sand text-center text-xs font-bold text-charcoal hover:text-terracotta transition-colors flex items-center justify-center gap-1.5 shadow-sm"
                         >
-                          <ShoppingBag className="w-3.5 h-3.5" />
-                          Add to Cart
+                          <QrCode className="w-3.5 h-3.5 text-terracotta" />
+                          <span>QR Code & Virtual Scan Passport</span>
                         </button>
                       </div>
                     </div>
@@ -526,6 +541,13 @@ export default function ArtMarketplacePage() {
           </div>
         </div>
       )}
+
+      {/* Global Product Passport Modal (Phone QR & Virtual Scan) */}
+      <ProductPassportModal
+        isOpen={!!scanPassportId}
+        passportId={scanPassportId || undefined}
+        onClose={() => setScanPassportId(null)}
+      />
     </div>
   );
 }
