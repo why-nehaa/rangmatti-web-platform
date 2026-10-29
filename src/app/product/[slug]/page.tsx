@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { useStore } from '@/context/StoreContext';
 import { sampleProducts } from '@/data/products';
 import { sampleArtisans } from '@/data/artisans';
+import ProductPassportModal from '@/components/passport/ProductPassportModal';
 import { 
   Heart, 
   ShoppingBag, 
@@ -19,7 +20,8 @@ import {
   MapPin, 
   Sparkles,
   Layers,
-  ArrowRight
+  ArrowRight,
+  Smartphone
 } from 'lucide-react';
 
 export default function ProductDetailPage() {
@@ -32,6 +34,7 @@ export default function ProductDetailPage() {
   const [quantity, setQuantity] = useState(1);
   const [copiedLink, setCopiedLink] = useState(false);
   const [addedSuccess, setAddedSuccess] = useState(false);
+  const [showPassportModal, setShowPassportModal] = useState(false);
 
   if (!product) {
     notFound();
@@ -111,13 +114,14 @@ export default function ProductDetailPage() {
               </button>
 
               {/* Live Passport Floating Badge */}
-              <Link
-                href={`/passport/${product.passportId}`}
+              <button
+                onClick={() => setShowPassportModal(true)}
                 className="absolute bottom-4 left-4 px-3.5 py-1.5 rounded-full bg-paper/95 backdrop-blur-md text-xs font-bold text-charcoal border border-sand flex items-center gap-2 hover:bg-paper hover:text-terracotta transition-colors shadow-lg"
+                title="Click to Scan QR or View Virtual Passport"
               >
                 <QrCode className="w-4 h-4 text-terracotta" />
                 <span>Verified Passport: {product.passportId}</span>
-              </Link>
+              </button>
             </div>
 
             {/* Thumbnails */}
@@ -249,22 +253,32 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Provenance Box Link */}
-            <div className="p-4 rounded-xl bg-sand/20 border border-sand/50 flex items-center justify-between">
+            <div className="p-4 rounded-xl bg-sand/20 border border-sand/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="space-y-0.5">
                 <p className="text-xs font-bold text-charcoal flex items-center gap-1.5">
                   <QrCode className="w-4 h-4 text-terracotta" />
-                  Digital Provenance Passport Available
+                  Digital Provenance Passport Attached
                 </p>
                 <p className="text-[11px] text-secondary">
                   Includes geological mine source, lab leach test report, and creation log.
                 </p>
               </div>
-              <Link
-                href={`/passport/${product.passportId}`}
-                className="px-3 py-1.5 rounded-lg bg-paper border border-border text-xs font-semibold text-charcoal hover:text-terracotta hover:border-terracotta whitespace-nowrap shadow-sm"
-              >
-                Inspect Passport
-              </Link>
+
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => setShowPassportModal(true)}
+                  className="px-3 py-1.5 rounded-lg bg-terracotta text-paper text-xs font-semibold hover:bg-terracotta-deep shadow-sm flex items-center gap-1"
+                >
+                  <Smartphone className="w-3.5 h-3.5" />
+                  <span>Scan QR / Virtual Scan</span>
+                </button>
+                <Link
+                  href={`/passport/${product.passportId}`}
+                  className="px-3 py-1.5 rounded-lg bg-paper border border-border text-xs font-semibold text-charcoal hover:text-terracotta hover:border-terracotta whitespace-nowrap shadow-sm"
+                >
+                  Full Ledger
+                </Link>
+              </div>
             </div>
 
             {/* Sharing & Delivery Assurance */}
@@ -395,6 +409,14 @@ export default function ProductDetailPage() {
           </div>
         )}
       </div>
+
+      {/* Global Product Passport Modal (Phone QR & Virtual Scan) */}
+      <ProductPassportModal
+        isOpen={showPassportModal}
+        passportId={product.passportId}
+        productTitle={product.title}
+        onClose={() => setShowPassportModal(false)}
+      />
     </div>
   );
 }
