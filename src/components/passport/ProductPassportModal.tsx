@@ -41,7 +41,7 @@ export default function ProductPassportModal({
 }: ProductPassportModalProps) {
   const [activeTab, setActiveTab] = useState<'scan' | 'virtual'>('scan');
   const [lanIp, setLanIp] = useState<string>('10.73.68.75');
-  const [targetMode, setTargetMode] = useState<'lan' | 'local' | 'custom'>('lan');
+  const [targetMode, setTargetMode] = useState<'lan' | 'local' | 'custom'>('local');
   const [customHost, setCustomHost] = useState<string>('');
   const [qrDataUrl, setQrDataUrl] = useState<string>('');
   const [resolvedUrl, setResolvedUrl] = useState<string>('');
