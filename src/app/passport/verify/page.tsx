@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { samplePassports } from '@/data/passports';
+import { canonicalPassports } from '@/data/passports';
 import { 
   ShieldCheck, 
   QrCode, 
@@ -90,9 +90,9 @@ export default function PassportVerifyPage() {
             <p className="text-xs font-bold uppercase tracking-wider text-secondary">
               Or Inspect One of Our Idea Tribe 2026 Sample Passports:
             </p>
-            <div className="space-y-2">
-              {Object.keys(samplePassports).map((id) => {
-                const item = samplePassports[id];
+            <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
+              {Object.keys(canonicalPassports).map((id) => {
+                const item = canonicalPassports[id];
                 return (
                   <Link
                     key={id}
