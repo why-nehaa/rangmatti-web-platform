@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { samplePassports } from '@/data/passports';
+import { samplePassports, canonicalPassports, findPassport } from '@/data/passports';
 import QRCodeDisplay from '@/components/passport/QRCodeDisplay';
 import { 
   ShieldCheck, 
@@ -24,9 +24,9 @@ import {
 export default function PassportDetailPage() {
   const params = useParams();
   const rawId = (params?.productId as string) || '';
-  const passportId = decodeURIComponent(rawId).toUpperCase();
-
-  const passport = samplePassports[passportId];
+  const cleanId = decodeURIComponent(rawId).trim();
+  const passport = findPassport(cleanId);
+  const passportId = passport?.passportId || cleanId.toUpperCase();
   const [currentUrl, setCurrentUrl] = useState('');
 
   useEffect(() => {
@@ -62,8 +62,8 @@ export default function PassportDetailPage() {
             You may be testing an unseeded ID or simulated code. Please explore one of our verified Idea Tribe 2026 demo passports below:
           </p>
 
-          <div className="space-y-2 pt-2 text-left">
-            {Object.keys(samplePassports).map((key) => (
+          <div className="space-y-2 pt-2 text-left max-h-60 overflow-y-auto pr-1">
+            {Object.keys(canonicalPassports).map((key) => (
               <Link
                 key={key}
                 href={`/passport/${key}`}
@@ -71,7 +71,7 @@ export default function PassportDetailPage() {
               >
                 <div>
                   <p className="font-mono font-bold text-terracotta">{key}</p>
-                  <p className="text-secondary">{samplePassports[key].productName}</p>
+                  <p className="text-secondary">{canonicalPassports[key].productName}</p>
                 </div>
                 <span className="text-terracotta font-semibold">Inspect →</span>
               </Link>
