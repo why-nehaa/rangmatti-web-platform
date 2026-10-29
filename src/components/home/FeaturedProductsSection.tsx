@@ -6,12 +6,14 @@ import Image from 'next/image';
 import { useStore } from '@/context/StoreContext';
 import { sampleProducts } from '@/data/products';
 import { sampleMaterials } from '@/data/materials';
+import ProductPassportModal from '@/components/passport/ProductPassportModal';
 import { Heart, ShoppingBag, ArrowRight, ShieldCheck, QrCode, Sparkles } from 'lucide-react';
 
 export default function FeaturedProductsSection() {
   const [activeTab, setActiveTab] = useState<'all' | 'art' | 'materials'>('all');
   const { addToCart, toggleWishlist, isInWishlist } = useStore();
   const [addedNotice, setAddedNotice] = useState<string | null>(null);
+  const [scanPassportId, setScanPassportId] = useState<string | null>(null);
 
   const handleAddToCart = (item: any, type: 'material' | 'artwork') => {
     addToCart({
@@ -29,8 +31,8 @@ export default function FeaturedProductsSection() {
     setTimeout(() => setAddedNotice(null), 3000);
   };
 
-  const displayArt = sampleProducts.slice(0, 3);
-  const displayMaterials = sampleMaterials.slice(0, 3);
+  const displayArt = sampleProducts.slice(0, 6);
+  const displayMaterials = sampleMaterials.slice(0, 6);
 
   return (
     <section className="py-20 bg-paper border-b border-border">
@@ -130,13 +132,14 @@ export default function FeaturedProductsSection() {
                       </button>
 
                       {/* Passport Tag */}
-                      <Link
-                        href={`/passport/${product.passportId}`}
-                        className="absolute bottom-3 left-3 px-2.5 py-1 rounded-full bg-paper/90 backdrop-blur-md text-[10px] font-bold text-charcoal border border-border flex items-center gap-1 hover:bg-paper hover:text-terracotta transition-colors"
+                      <button
+                        onClick={() => setScanPassportId(product.passportId)}
+                        className="absolute bottom-3 left-3 px-2.5 py-1 rounded-full bg-paper/95 backdrop-blur-md text-[10px] font-bold text-charcoal border border-border flex items-center gap-1 hover:bg-paper hover:text-terracotta transition-colors shadow-sm"
+                        title="Scan QR / Virtual Passport"
                       >
                         <QrCode className="w-3 h-3 text-terracotta" />
                         <span>Passport: {product.passportId}</span>
-                      </Link>
+                      </button>
                     </div>
 
                     {/* Details */}
@@ -174,19 +177,29 @@ export default function FeaturedProductsSection() {
                   </div>
 
                   {/* Actions */}
-                  <div className="px-5 pb-5 pt-1 grid grid-cols-2 gap-2">
-                    <Link
-                      href={`/product/${product.slug}`}
-                      className="py-2.5 px-3 rounded-lg border border-border text-center text-xs font-semibold text-charcoal hover:bg-paper hover:border-charcoal transition-colors"
-                    >
-                      Details
-                    </Link>
+                  <div className="px-5 pb-5 pt-1 space-y-2">
+                    <div className="grid grid-cols-2 gap-2">
+                      <Link
+                        href={`/product/${product.slug}`}
+                        className="py-2.5 px-3 rounded-lg border border-border text-center text-xs font-semibold text-charcoal hover:bg-paper hover:border-charcoal transition-colors"
+                      >
+                        Details
+                      </Link>
+                      <button
+                        onClick={() => handleAddToCart(product, 'artwork')}
+                        className="py-2.5 px-3 rounded-lg bg-terracotta hover:bg-terracotta-deep text-paper text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors shadow-sm"
+                      >
+                        <ShoppingBag className="w-3.5 h-3.5" />
+                        Add to Cart
+                      </button>
+                    </div>
+
                     <button
-                      onClick={() => handleAddToCart(product, 'artwork')}
-                      className="py-2.5 px-3 rounded-lg bg-terracotta hover:bg-terracotta-deep text-paper text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors shadow-sm"
+                      onClick={() => setScanPassportId(product.passportId)}
+                      className="w-full py-2 px-3 rounded-lg bg-sand/20 hover:bg-sand/40 border border-sand text-center text-xs font-bold text-charcoal hover:text-terracotta transition-colors flex items-center justify-center gap-1.5 shadow-sm"
                     >
-                      <ShoppingBag className="w-3.5 h-3.5" />
-                      Add to Cart
+                      <QrCode className="w-3.5 h-3.5 text-terracotta" />
+                      <span>QR Code & Virtual Scan</span>
                     </button>
                   </div>
                 </div>
@@ -276,19 +289,29 @@ export default function FeaturedProductsSection() {
                   </div>
 
                   {/* Actions */}
-                  <div className="px-5 pb-5 pt-1 grid grid-cols-2 gap-2">
-                    <Link
-                      href="/materials"
-                      className="py-2.5 px-3 rounded-lg border border-border text-center text-xs font-semibold text-charcoal hover:bg-paper hover:border-charcoal transition-colors"
-                    >
-                      Lab Specs
-                    </Link>
+                  <div className="px-5 pb-5 pt-1 space-y-2">
+                    <div className="grid grid-cols-2 gap-2">
+                      <Link
+                        href="/materials"
+                        className="py-2.5 px-3 rounded-lg border border-border text-center text-xs font-semibold text-charcoal hover:bg-paper hover:border-charcoal transition-colors"
+                      >
+                        Lab Specs
+                      </Link>
+                      <button
+                        onClick={() => handleAddToCart(material, 'material')}
+                        className="py-2.5 px-3 rounded-lg bg-forest hover:bg-forest-deep text-paper text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors shadow-sm"
+                      >
+                        <ShoppingBag className="w-3.5 h-3.5" />
+                        Add to Cart
+                      </button>
+                    </div>
+
                     <button
-                      onClick={() => handleAddToCart(material, 'material')}
-                      className="py-2.5 px-3 rounded-lg bg-forest hover:bg-forest-deep text-paper text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors shadow-sm"
+                      onClick={() => setScanPassportId(material.passportId || 'RM-MAT-001')}
+                      className="w-full py-2 px-3 rounded-lg bg-forest/10 hover:bg-forest/20 border border-forest/30 text-center text-xs font-bold text-forest hover:text-forest-deep transition-colors flex items-center justify-center gap-1.5 shadow-sm"
                     >
-                      <ShoppingBag className="w-3.5 h-3.5" />
-                      Add to Cart
+                      <QrCode className="w-3.5 h-3.5" />
+                      <span>QR Code & Virtual Scan</span>
                     </button>
                   </div>
                 </div>
@@ -319,6 +342,13 @@ export default function FeaturedProductsSection() {
           </div>
         </div>
       </div>
+
+      {/* Global Product Passport Modal (Phone QR & Virtual Scan) */}
+      <ProductPassportModal
+        isOpen={!!scanPassportId}
+        passportId={scanPassportId || undefined}
+        onClose={() => setScanPassportId(null)}
+      />
     </section>
   );
 }
